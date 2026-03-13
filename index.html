@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KirbynKrew ✨ Animation is hell!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    /* ── CSS VARIABLES ─────────────────────────────────────── */
+    :root {
+      --color-primary:      #f7a8be;
+      --color-secondary:    #e8809a;
+      --color-accent:       #ffe566;
+      --color-accent2:      #b8a0d8;
+      --color-bg:           #fff5f8;
+      --color-bg-alt:       #fce8f0;
+      --color-bg-dark:      #2a1a2e;
+      --color-text:         #4a1e30;
+      --color-text-muted:   #c07090;
+      --color-text-light:   #fff5f8;
+      --font-heading:       'Fredoka One', cursive;
+      --font-body:          'Nunito', sans-serif;
+      --space-xs:           0.25rem;
+      --space-sm:           0.5rem;
+      --space-md:           1rem;
+      --space-lg:           1.75rem;
+      --space-xl:           3rem;
+      --space-xxl:          5rem;
+      --container-width:    1100px;
+      --radius:             2rem;
+      --radius-sm:          1rem;
+      --shadow:             0 8px 32px rgba(232,128,154,0.25);
+      --shadow-lg:          0 16px 48px rgba(232,128,154,0.35);
+    }
+
+    /* ── RESET & BASE ──────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--color-bg);
+      color: var(--color-text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── BUBBLY BACKGROUND BLOBS ───────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(247,168,190,0.35) 0%, transparent 45%),
+        radial-gradient(circle at 85% 10%, rgba(255,229,102,0.25) 0%, transparent 40%),
+        radial-gradient(circle at 70% 80%, rgba(184,160,216,0.3) 0%, transparent 45%),
+        radial-gradient(circle at 20% 85%, rgba(232,128,154,0.2) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ───────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 8000;
+      background: rgba(255,245,248,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 3px solid var(--color-primary);
+      box-shadow: 0 4px 20px rgba(247,168,190,0.3);
+    }
+    .nav-inner {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      color: var(--color-secondary);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .nav-logo span { font-size: 1.4rem; }
+    .nav-links {
+      display: flex;
+      gap: var(--space-lg);
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--color-text);
+      text-decoration: none;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--radius-sm);
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover {
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: var(--space-sm);
+      z-index: 9100;
+    }
+    .hamburger span {
+      display: block;
+      width: 26px;
+      height: 3px;
+      border-radius: 3px;
+      background: var(--color-secondary);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    /* Mobile menu overlay */
+    #mobile-menu {
+      display: none;
+      position: fixed;
+      top: 64px; left: 0; right: 0;
+      background: rgba(255,245,248,0.97);
+      backdrop-filter: blur(20px);
+      z-index: 9000;
+      padding: var(--space-lg);
+      border-bottom: 3px solid var(--color-primary);
+      overflow-y: auto;
+      max-height: calc(100vh - 64px);
+    }
+    #mobile-menu.open { display: block; }
+    #mobile-menu ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    #mobile-menu ul a {
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--color-text);
+      text-decoration: none;
+      display: block;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-sm);
+      transition: background 0.2s;
+    }
+    #mobile-menu ul a:hover { background: var(--color-bg-alt); }
+
+    /* ── SHARED LAYOUT ─────────────────────────────────────── */
+    .container {
+      max-width: var(--container-width);
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+      position: relative;
+      z-index: 1;
+    }
+    section { position: relative; z-index: 1; }
+
+    /* ── DECORATIVE BUBBLES ────────────────────────────────── */
+    .bubble-row {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+    .bubble {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      opacity: 0.7;
+      animation: bobble 2s ease-in-out infinite;
+    }
+    .bubble:nth-child(2) { background: var(--color-accent); animation-delay: 0.3s; width:16px; height:16px; }
+    .bubble:nth-child(3) { background: var(--color-accent2); animation-delay: 0.6s; }
+    .bubble:nth-child(4) { background: var(--color-secondary); animation-delay: 0.9s; width:10px; height:10px; }
+    @keyframes bobble {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* ── SECTION LABEL PILL ────────────────────────────────── */
+    .section-pill {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--color-accent);
+      color: var(--color-text);
+      padding: 4px 16px;
+      border-radius: 999px;
+      margin-bottom: var(--space-md);
+    }
+
+    /* ── HERO SECTION ──────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      overflow: hidden;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+      align-items: center;
+    }
+    .hero-text {}
+    .hero-greeting {
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-sm);
+    }
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 1.05;
+      color: var(--color-secondary);
+      margin-bottom: var(--space-md);
+      text-shadow: 4px 4px 0 rgba(232,128,154,0.2);
+    }
+    .hero-title .accent { color: var(--color-accent); -webkit-text-stroke: 2px var(--color-secondary); }
+    .hero-tagline {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--color-text);
+      margin-bottom: var(--space-lg);
+      max-width: 420px;
+    }
+    .hero-tagline em {
+      font-style: normal;
+      background: var(--color-accent);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      background: var(--color-secondary);
+      color: #fff;
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 14px 32px;
+      border-radius: 999px;
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-cta:hover { transform: translateY(-3px) scale(1.03); box-shadow: var(--shadow-lg); }
+    .hero-image-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero-blob {
+      position: absolute;
+      width: 110%;
+      height: 110%;
+      background: radial-gradient(circle, rgba(247,168,190,0.5) 0%, rgba(184,160,216,0.3) 60%, transparent 80%);
+      border-radius: 60% 40% 55% 45% / 45% 55% 40% 60%;
+      animation: blobmorph 7s ease-in-out infinite;
+      z-index: 0;
+    }
+    @keyframes blobmorph {
+      0%, 100% { border-radius: 60% 40% 55% 45% / 45% 55% 40% 60%; }
+      33% { border-radius: 40% 60% 45% 55% / 55% 40% 60% 45%; }
+      66% { border-radius: 50% 50% 60% 40% / 40% 60% 50% 50%; }
+    }
+    .hero-image-wrap img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 40% 60% 55% 45% / 45% 55% 40% 60%;
+      border: 5px solid var(--color-primary);
+      box-shadow: var(--shadow-lg);
+      animation: floatimg 4s ease-in-out infinite;
+    }
+    @keyframes floatimg {
+      0%, 100% { transform: translateY(0px) rotate(-1deg); }
+      50% { transform: translateY(-16px) rotate(1deg); }
+    }
+    .hero-sparkles {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .sparkle {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: sparkle-pop 3s ease-in-out infinite;
+    }
+    .sparkle:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; }
+    .sparkle:nth-child(2) { top: 20%; right: 8%; animation-delay: 0.7s; font-size: 1rem; }
+    .sparkle:nth-child(3) { bottom: 15%; left: 10%; animation-delay: 1.2s; font-size: 1.2rem; }
+    .sparkle:nth-child(4) { bottom: 25%; right: 5%; animation-delay: 1.8s; }
+    @keyframes sparkle-pop {
+      0%, 100% { opacity: 0.3; transform: scale(0.8) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1.2) rotate(20deg); }
+    }
+
+    /* ── YOUTUBE / CHECK IT SECTION ──────────────────────────── */
+    #check-it {
+      padding: var(--space-xxl) 0;
+      background: var(--color-bg-dark);
+      overflow: hidden;
+    }
+    #check-it .container { text-align: center; }
+    .check-it-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--color-accent);
+      margin-bottom: var(--space-md);
+      text-shadow: 3px 3px 0 rgba(232,128,154,0.4);
+    }
+    .check-it-sub {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: rgba(255,245,248,0.75);
+      max-width: 560px;
+      margin: 0 auto var(--space-xl);
+    }
+    .yt-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+    .yt-card {
+      background: rgba(255,245,248,0.06);
+      border: 2px solid rgba(247,168,190,0.3);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .yt-card:hover { transform: translateY(-6px); border-color: var(--color-primary); }
+    .yt-card-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+    }
+    .yt-card-body { padding: var(--space-md); text-align: left; }
+    .yt-card-title {
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 1rem;
+      color: #fff5f8;
+      margin-bottom: var(--space-xs);
+    }
+    .yt-card-meta {
+      font-size: 0.82rem;
+      color: rgba(255,245,248,0.5);
+    }
+    .yt-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      background: #ff0000;
+      color: #fff;
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 1.1rem;
+      padding: 14px 40px;
+      border-radius: 999px;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(255,0,0,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .yt-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 16px 40px rgba(255,0,0,0.45); }
+    .yt-icon { font-size: 1.3rem; }
+
+    /* ── PRINTS SECTION ─────────────────────────────────────── */
+    #my-prints {
+      padding: var(--space-xxl) 0;
+      background: var(--color-bg-alt);
+    }
+    .section-header { text-align: center; margin-bottom: var(--space-xl); }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--color-secondary);
+      margin-bottom: var(--space-sm);
+    }
+    .section-desc {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .prints-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-lg);
+    }
+    .print-card {
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.25s, box-shadow 0.25s;
+      border: 3px solid var(--color-primary);
+    }
+    .print-card:hover { transform: translateY(-8px) rotate(-1deg); box-shadow: var(--shadow-lg); }
+    .print-card img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      display: block;
+    }
+    .print-card-body { padding: var(--space-md); }
+    .print-card-name {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      color: var(--color-secondary);
+      margin-bottom: var(--space-xs);
+    }
+    .print-card-desc {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+    .print-tag {
+      display: inline-block;
+      background: var(--color-bg-alt);
+      color: var(--color-secondary);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 999px;
+      margin-top: var(--space-sm);
+    }
+
+    /* ── COLLECTABLES SECTION ───────────────────────────────── */
+    #collectables {
+      padding: var(--space-xxl) 0;
+      background: var(--color-bg);
+    }
+    .tabs {
+      display: flex;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: var(--space-xl);
+    }
+    .tab-btn {
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 2.5px solid var(--color-primary);
+      background: transparent;
+      color: var(--color-secondary);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, transform 0.15s;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background: var(--color-primary);
+      color: #fff;
+      transform: scale(1.06);
+    }
+    .collectable-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--space-lg);
+    }
+    .collectable-card {
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      text-align: center;
+      padding-bottom: var(--space-md);
+      border: 3px solid transparent;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .collectable-card:hover { border-color: var(--color-accent); transform: translateY(-5px) scale(1.02); }
+    .collectable-card img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      display: block;
+      margin-bottom: var(--space-sm);
+    }
+    .collectable-name {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      color: var(--color-secondary);
+      padding: 0 var(--space-sm);
+    }
+    .collectable-cat {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .cat-badge {
+      display: inline-block;
+      margin-top: var(--space-xs);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 10px;
+      border-radius: 999px;
+    }
+    .cat-plushies { background: #ffd6e8; color: #c05080; }
+    .cat-games    { background: #d6f0ff; color: #2060a0; }
+    .cat-fidgets  { background: #e8ffda; color: #3a8030; }
+    .cat-pokemon  { background: #fff3c4; color: #a06000; }
+
+    /* ── FOOTER ─────────────────────────────────────────────── */
+    footer {
+      background: var(--color-bg-dark);
+      padding: var(--space-xl) 0 var(--space-lg);
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      color: var(--color-primary);
+      margin-bottom: var(--space-sm);
+    }
+    .footer-tagline {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: rgba(255,245,248,0.5);
+      margin-bottom: var(--space-lg);
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-lg);
+      list-style: none;
+      margin-bottom: var(--space-lg);
+    }
+    .footer-links a {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: rgba(255,245,248,0.6);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--color-accent); }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,245,248,0.3);
+    }
+    .footer-heart { color: var(--color-primary); }
+
+    /* ── WAVY DIVIDER ───────────────────────────────────────── */
+    .wave-divider {
+      display: block;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+    }
+    .wave-divider svg { display: block; }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero-text { order: 2; }
+      .hero-image-wrap { order: 1; }
+      .hero-tagline { margin: 0 auto var(--space-lg); }
+      .hero-image-wrap img { max-width: 260px; }
+    }
+    @media (min-width: 769px) {
+      #mobile-menu { display: none !important; }
+    }
+  </style>
+  
+  
+</head>
+<body style="">
+
+  <!-- ── NAV ─────────────────────────────────────────────────── -->
+  <nav style="">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <span>🌸</span> KirbynKrew
+      </a>
+      <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#check-it">YouTube</a></li>
+        <li><a href="#my-prints">My Prints</a></li>
+        <li><a href="#collectables">Collectables</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" role="navigation" aria-label="Mobile navigation">
+    <ul>
+      <li><a href="#hero" class="mobile-nav-link">🏠 Home</a></li>
+      <li><a href="#check-it" class="mobile-nav-link">▶️ YouTube</a></li>
+      <li><a href="#my-prints" class="mobile-nav-link">🖨️ My Prints</a></li>
+      <li><a href="#collectables" class="mobile-nav-link">🎮 Collectables</a></li>
+    </ul>
+  </div>
+
+  <!-- ── HERO ─────────────────────────────────────────────────── -->
+  <section id="hero" data-zone="hero" data-zone-label="Hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <p class="hero-greeting" data-editable="">Welcome to the Krew ✨</p>
+          <h1 class="hero-title" data-editable="">
+            Kirby<span class="accent">n</span>Krew
+          </h1>
+          <p class="hero-tagline" data-editable="">
+            Gaming · Animation · 3D Printing · and a whole lotta chaos.<br>
+            <em>Animation is hell - but we do it anyway!&nbsp;</em></p>
+          <a href="#check-it" class="hero-cta">
+            ▶️ Watch on YouTube
+          </a>
+        </div>
+        <div class="hero-image-wrap">
+          <div class="hero-blob"></div>
+          <div class="hero-sparkles">
+            <span class="sparkle">✨</span>
+            <span class="sparkle">⭐</span>
+            <span class="sparkle">💫</span>
+            <span class="sparkle">🌟</span>
+          </div>
+          <img src="./assets/pipkirby.jpg" data-editable-image="" alt="KirbynKrew hero image" style="cursor: pointer;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Wave out -->
+    <div class="wave-divider" style="margin-top:4rem;">
+      <svg viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:60px;width:100%;">
+        <path d="M0,40 C200,80 400,0 600,40 C800,80 1000,0 1200,40 L1200,80 L0,80 Z" fill="#2a1a2e"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ── CHECK IT / YOUTUBE ────────────────────────────────────── -->
+  <section id="check-it" data-zone="check-it" data-zone-label="Check It Out">
+    <div class="container">
+      <div class="bubble-row">
+        <div class="bubble"></div><div class="bubble"></div>
+        <div class="bubble"></div><div class="bubble"></div>
+      </div>
+      <div style="text-align:center; margin-bottom:var(--space-sm);">
+        <span class="section-pill">▶️ YouTube</span>
+      </div>
+      <h2 class="check-it-title" data-editable="">Check Me Out!</h2>
+      <p class="check-it-sub" data-editable="">
+        Animations, gaming adventures, 3D print reveals, and chaotic behind-the-scenes content — 
+        all served fresh on the KirbynKrew channel!
+      </p>
+
+      <div class="yt-card-grid">
+        <div class="yt-card" style="position: relative;">
+          <img src="./assets/hive.png" data-editable-image="" class="yt-card-thumb" alt="YouTube video thumbnail" style="cursor: pointer;">
+          <div class="yt-card-body">
+            <p class="yt-card-title" data-editable="">Hive Mini Games</p>
+            <p class="yt-card-meta" data-editable="">45K views · 2 days ago</p>
+          </div>
+        </div>
+        <div class="yt-card" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" class="yt-card-thumb" alt="YouTube video thumbnail" style="cursor: pointer;">
+          <div class="yt-card-body">
+            <p class="yt-card-title" data-editable="">I Tried Animating Kirby For 30 Days Straight...</p>
+            <p class="yt-card-meta" data-editable="">112K views · 1 week ago</p>
+          </div>
+        </div>
+        <div class="yt-card" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" class="yt-card-thumb" alt="YouTube video thumbnail" style="cursor: pointer;">
+          <div class="yt-card-body">
+            <p class="yt-card-title" data-editable="">My Entire Plushie Collection — 2024 Edition 🧸</p>
+            <p class="yt-card-meta" data-editable="">78K views · 3 weeks ago</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center;">
+        <a href="https://www.youtube.com/@KirbynKrew" target="_blank" rel="noopener" class="yt-btn">
+          <span class="yt-icon">▶</span> Subscribe on YouTube
+        </a>
+      </div>
+    </div>
+
+    <div class="wave-divider" style="margin-top:4rem;">
+      <svg viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:60px;width:100%;">
+        <path d="M0,40 C200,0 400,80 600,40 C800,0 1000,80 1200,40 L1200,80 L0,80 Z" fill="#fce8f0"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ── MY PRINTS ─────────────────────────────────────────────── -->
+  <section id="my-prints" data-zone="my-prints" data-zone-label="My Prints">
+    <div class="container">
+      <div class="bubble-row">
+        <div class="bubble"></div><div class="bubble"></div>
+        <div class="bubble"></div><div class="bubble"></div>
+      </div>
+      <div class="section-header">
+        <span class="section-pill">🖨️ 3D Prints</span>
+        <h2 class="section-title" data-editable="">My Recent Prints</h2>
+        <p class="section-desc" data-editable="">
+          Freshly off the print bed! From fan art figures to functional fidgets — 
+          here's what the printer has been cooking up lately.
+        </p>
+      </div>
+
+      <div class="prints-grid">
+        <div class="print-card" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="3D printed Kirby figure" style="cursor: pointer;">
+          <div class="print-card-body">
+            <p class="print-card-name" data-editable="">Kirby Planter</p>
+            <p class="print-card-desc" data-editable="">A tiny Kirby pot for your succulents. Painted with acrylics and sealed with gloss.</p>
+            <span class="print-tag" data-editable="">Fan Art</span>
+          </div>
+        </div>
+        <div class="print-card" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="3D printed figure" style="cursor: pointer;">
+          <div class="print-card-body">
+            <p class="print-card-name" data-editable="">Articulated Dragon</p>
+            <p class="print-card-desc" data-editable="">Print-in-place flexible dragon — no supports, no assembly, pure magic.</p>
+            <span class="print-tag" data-editable="">Functional</span>
+          </div>
+        </div>
+        <div class="print-card" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="3D printed Pokémon figure" style="cursor: pointer;">
+          <div class="print-card-body">
+            <p class="print-card-name" data-editable="">Jigglypuff Stand</p>
+            <p class="print-card-desc" data-editable="">Custom Pokémon display stand with base lighting slot. Pink PETG, obviously.</p>
+            <span class="print-tag" data-editable="">Pokémon</span>
+          </div>
+        </div>
+        <div class="print-card" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="3D printed keycap" style="cursor: pointer;">
+          <div class="print-card-body">
+            <p class="print-card-name" data-editable="">Artisan Keycaps</p>
+            <p class="print-card-desc" data-editable="">Tiny game character resin keycaps for the ultimate kawaii keyboard setup.</p>
+            <span class="print-tag" data-editable="">Accessories</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wave-divider" style="margin-top:4rem;">
+      <svg viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="height:60px;width:100%;">
+        <path d="M0,40 C200,80 400,0 600,40 C800,80 1000,0 1200,40 L1200,80 L0,80 Z" fill="#fff5f8"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ── COLLECTABLES ──────────────────────────────────────────── -->
+  <section id="collectables" data-zone="collectables" data-zone-label="Collectables">
+    <div class="container">
+      <div class="bubble-row">
+        <div class="bubble"></div><div class="bubble"></div>
+        <div class="bubble"></div><div class="bubble"></div>
+      </div>
+      <div class="section-header">
+        <span class="section-pill">🎮 Collection</span>
+        <h2 class="section-title" data-editable="">My Collectables</h2>
+        <p class="section-desc" data-editable="">
+          Plushies, consoles, fidgets, and Pokémon — the hoard is very real and very loved.
+        </p>
+      </div>
+
+      <div class="tabs" id="tabs">
+        <button class="tab-btn active" data-filter="all">All ✨</button>
+        <button class="tab-btn" data-filter="plushies">🧸 Plushies</button>
+        <button class="tab-btn" data-filter="games">🎮 Games &amp; Consoles</button>
+        <button class="tab-btn" data-filter="fidgets">🌀 Fidgets</button>
+        <button class="tab-btn" data-filter="pokemon">⚡ Pokémon</button>
+      </div>
+
+      <div class="collectable-grid" id="collectable-grid">
+
+        <div class="collectable-card" data-category="plushies" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="Kirby plushie" style="cursor: pointer;">
+          <p class="collectable-name" data-editable="">Kirby Plushie</p>
+          <p class="collectable-cat" data-editable="">Official Nintendo</p>
+          <span class="cat-badge cat-plushies">Plushies</span>
+        </div>
+
+        <div class="collectable-card" data-category="pokemon" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="Jigglypuff plushie" style="cursor: pointer;">
+          <p class="collectable-name" data-editable="">Jigglypuff</p>
+          <p class="collectable-cat" data-editable="">Pokémon Center</p>
+          <span class="cat-badge cat-pokemon">Pokémon</span>
+        </div>
+
+        <div class="collectable-card" data-category="games" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="Nintendo Switch" style="cursor: pointer;">
+          <p class="collectable-name" data-editable="">Nintendo Switch OLED</p>
+          <p class="collectable-cat" data-editable="">Pink &amp; White Edition</p>
+          <span class="cat-badge cat-games">Consoles</span>
+        </div>
+
+        <div class="collectable-card" data-category="fidgets" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="Fidget cube" style="cursor: pointer;">
+          <p class="collectable-name" data-editable="">Infinity Cube</p>
+          <p class="collectable-cat" data-editable="">Pastel Edition</p>
+          <span class="cat-badge cat-fidgets">Fidgets</span>
+        </div>
+
+        <div class="collectable-card" data-category="pokemon" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="Pokémon cards" style="cursor: pointer;">
+          <p class="collectable-name" data-editable="">151 Booster Box</p>
+          <p class="collectable-cat" data-editable="">Scarlet &amp; Violet</p>
+          <span class="cat-badge cat-pokemon">Pokémon</span>
+        </div>
+
+        <div class="collectable-card" data-category="plushies" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="Squishmallow" style="cursor: pointer;">
+          <p class="collectable-name" data-editable="">Squishmallow Squad</p>
+          <p class="collectable-cat" data-editable="">Various sizes</p>
+          <span class="cat-badge cat-plushies">Plushies</span>
+        </div>
+
+        <div class="collectable-card" data-category="games" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="Kirby game collection" style="cursor: pointer;">
+          <p class="collectable-name" data-editable="">Kirby Game Collection</p>
+          <p class="collectable-cat" data-editable="">Every mainline Kirby title</p>
+          <span class="cat-badge cat-games">Games</span>
+        </div>
+
+        <div class="collectable-card" data-category="fidgets" style="position: relative;">
+          <img src="./assets/placeholder.jpg" data-editable-image="" alt="Pop-it fidget" style="cursor: pointer;">
+          <p class="collectable-name" data-editable="">Pop-It Kirby</p>
+          <p class="collectable-cat" data-editable="">Custom shaped</p>
+          <span class="cat-badge cat-fidgets">Fidgets</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ────────────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <p class="footer-logo" data-editable="">KirbynKrew 🌸</p>
+      <p class="footer-tagline" data-editable="">Animation is hell — but we do it anyway ✨</p>
+      <ul class="footer-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#check-it">YouTube</a></li>
+        <li><a href="#my-prints">Prints</a></li>
+        <li><a href="#collectables">Collectables</a></li>
+        <li><a href="https://www.youtube.com/@KirbynKrew" target="_blank" rel="noopener">Subscribe</a></li>
+      </ul>
+      <p class="footer-copy" data-editable="">
+        © 2024 KirbynKrew · Made with <span class="footer-heart">♥</span> and too much pink filament
+      </p>
+    </div>
+  </footer>
+
+  <!-- ── SCRIPTS ───────────────────────────────────────────────── -->
+  <script>
+    // Hamburger toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen);
+    });
+    // Close mobile menu on link click
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('open');
+      });
+    });
+
+    // Collectable tab filter
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.collectable-card').forEach(card => {
+          card.style.display = (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+        });
+      });
+    });
+  </script>
+
+
+
+</body></html>
